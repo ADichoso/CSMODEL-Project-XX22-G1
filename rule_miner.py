@@ -167,8 +167,8 @@ class RuleMiner(object):
         itemsets = self.get_frequent_itemsets(data)
         print("Previous itemset count: ", len(itemsets))
         #limits itemsets to only those containing the filter
-        # if filter != None:
-        #     itemsets = [sublist for sublist in itemsets if filter in sublist]
+        if filter != None:
+            itemsets = [sublist for sublist in itemsets if filter[0] in sublist or filter[1] in sublist]
         print("New itemset count: ", len(itemsets))
         association_rules = []
         for itemset in itemsets:
