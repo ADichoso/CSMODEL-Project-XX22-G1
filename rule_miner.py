@@ -23,14 +23,6 @@ class RuleMiner(object):
         Returns:
             int -- support for itemset in data
         """
-
-        # TODO: Implement this function based on the documentation.
-        # Hint: Use the pandas.DataFrame.all() and the pandas.DataFrame.sum()
-        # function.
-
-        
-        #use .all function to determine the rows that contain all the items in the itemset
-        #use .sum function to sum the rows that contain all the items in the itemset
         support = data[itemset].all(axis=1).sum()
         
 
@@ -112,7 +104,6 @@ class RuleMiner(object):
             list -- list of frequent itemsets in the dataset.
         """
 
-        # TODO: Complete this function.
 
         itemsets = [[i] for i in data.columns]
         old_itemsets = []
@@ -121,11 +112,6 @@ class RuleMiner(object):
         while flag:
             new_itemsets = []
             for itemset in itemsets:
-                # TODO: Get the support for each itemset and add the itemset to
-                # the list new_itemsets if the support for the itemset is
-                # greater than or equal to the support threshold support_t
-                # Hint: Use the get_support() function that we have defined in
-                # this class.
                 support = self.get_support(data, itemset)
                 if support >= self.support_t:
                     new_itemsets.append(itemset)
@@ -154,9 +140,6 @@ class RuleMiner(object):
         """
 
 
-        # TODO: Implement this function based on the documentation.
-        # Hint: Use the get_support() function that we have defined in this
-        # class.
 
         #concatenate sets in rule
         union = rule[0] + rule[1]
@@ -170,7 +153,7 @@ class RuleMiner(object):
         print(f"Confidence: {confidence}")
         return confidence
 
-    def get_association_rules(self, data):
+    def get_association_rules(self, data, filter=None):
         """Returns a list of association rules with support greater than or
         equal to the support threshold support_t and confidence greater than or
         equal to the confidence threshold confidence_t.
@@ -181,35 +164,22 @@ class RuleMiner(object):
             list -- list of association rules. If the rule is X -> y, then each
             rule is a list containing [X, y].
         """
-        # TODO: Complete this function.
-
-        # TODO: Call the get_frequent_itemsets() function that we have defined
-        # in this class, and assign the result to the variable itemsets.
         itemsets = self.get_frequent_itemsets(data)
-        
-
-        rules = []
-        for itemset in itemsets:
-            # TODO: Get the rules for each frequent itemset and add to the
-            # list rules
-            # Hint: Use the get_rules() function that we have defined in this
-            # class.
-            for x in self.get_rules(itemset):
-                rules.append(x)
-            #print(rules)
+        print("Previous itemset count: ", len(itemsets))
+        #limits itemsets to only those containing the filter
+        # if filter != None:
+        #     itemsets = [sublist for sublist in itemsets if filter in sublist]
+        print("New itemset count: ", len(itemsets))
         association_rules = []
-        for rule in rules:
-            # TODO: Get the confidence for each rule and add the rule to
-            # the list association_rules if the confidence for the rule is
-            # greater than or equal to the confidence threshold confidence_t
-            # Hint: Use the get_confidence() function that we have defined in
-            # this class.
-            confidence = self.get_confidence(data, rule)
-            print(rule, confidence)
-            if confidence >= self.confidence_t:
-                rule_dict = {"Rule" : [], "Confidence": []}
-                rule_dict["rule"].append(rule)
-                rule_dict["confidence"].append(confidence)
+        for itemset in itemsets:
+            for rule in self.get_rules(itemset):
+                confidence = self.get_confidence(data, rule)
+                if confidence >= self.confidence_t:
+                    rule_dict = dict()
+                    rule_dict["Rule"] = rule
+                    rule_dict["Confidence"] = confidence
 
-                association_rules.append(rule_dict)
+                    association_rules.append(rule_dict)
+                
+            #print(rules)
         return association_rules
